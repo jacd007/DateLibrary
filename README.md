@@ -66,3 +66,4 @@ To get a Git project into your build:
  ```
     :dependencies [[com.github.jacd007/DateLibrary "1.0.0"]]	
  ``` 
+ > New Version from 1.0.0 to 1.0.0.1
