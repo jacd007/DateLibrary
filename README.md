@@ -43,7 +43,7 @@ To get a Git project into your build:
 #### Gradle
 ```
  	dependencies {
-	        implementation 'com.github.jacd007:DateLibrary:Tag'
+	        implementation 'com.github.jacd007:DateLibrary:1.0.0'
 	}
  ```
  
@@ -52,17 +52,17 @@ To get a Git project into your build:
  	<dependency>
 	    <groupId>com.github.jacd007</groupId>
 	    <artifactId>DateLibrary</artifactId>
-	    <version>Tag</version>
+	    <version>1.0.0</version>
 	</dependency>
  ```
  #### sbt
  
  ```
-    libraryDependencies += "com.github.jacd007" % "DateLibrary" % "Tag"	
+    libraryDependencies += "com.github.jacd007" % "DateLibrary" % "1.0.0"	
  ```
  
  #### leiningen
  
  ```
-    :dependencies [[com.github.jacd007/DateLibrary "Tag"]]	
+    :dependencies [[com.github.jacd007/DateLibrary "1.0.0"]]	
  ``` 
