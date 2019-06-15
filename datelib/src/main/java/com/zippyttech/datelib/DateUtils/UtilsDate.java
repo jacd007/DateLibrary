@@ -54,7 +54,7 @@ public class UtilsDate {
         }
     }
 
-    private static String textDateFromDifferencesDays(String date, String format) throws ParseException{
+    public static String textDateFromDifferencesDays(String date, String format) throws ParseException{
         String HOUR_SHORT = "HH:mm",FORMAT_SHORT="dd-MM-yy";
         String today = UtilsDate.dateFormatAll(FORMAT_SHORT);
         String auxDate = UtilsDate.changeData(date,format,FORMAT_SHORT);
