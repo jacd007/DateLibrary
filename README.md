@@ -8,14 +8,14 @@ To get a Git project into your build:
 
  #### Gradle
   Add it in your root build.gradle at the end of repositories:
- '
+ ```
  	allprojects {
 		repositories {
 			...
 			maven { url 'https://jitpack.io' }
 		}
 	}
-'
+ ```
  
  #### Maven
  ```
