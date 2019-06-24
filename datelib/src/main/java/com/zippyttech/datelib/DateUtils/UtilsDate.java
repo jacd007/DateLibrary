@@ -4,6 +4,8 @@ package com.zippyttech.datelib.DateUtils;
  * Created by zippyttech on 15/06/19.
  */
 
+import android.os.ParcelFormatException;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,28 +23,44 @@ public class UtilsDate {
     private static final String OK_TAG = "UtilsDate";
     private static final String ERROR_TAG = "ERROR";
 
-    public static String dateFormatAll(String formate) {
-        //// TODO: formato de fecha dd-MM-yyyy HH:mm:ss      31-12-2017 17:59:59
+    public static String getDateToday() {
         Date date = Calendar.getInstance().getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat(formate);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(date);
     }
 
-    public static String getDay(String date) {
-        //// TODO: formato de fecha dd-MM-yyyy HH:mm:ss      31-12-2017 17:59:59
-        Date d = StringToDate(date, "EEEE");
-        SimpleDateFormat formatter = new SimpleDateFormat("EEEE");
+    public static String getDateDay(String Date) throws ParseException {
+        String Format = "EEEE";
+        DateFormat df = new SimpleDateFormat(Format, Locale.ENGLISH);
+        Date d = df.parse(Date);
+        SimpleDateFormat formatter = new SimpleDateFormat(Format);
+        return formatter.format(d);
+    }
+    public static String getDateMonth(String Date) throws ParseException {
+        String Format = "MMMM";
+        DateFormat df = new SimpleDateFormat(Format, Locale.ENGLISH);
+        Date d = df.parse(Date);
+        SimpleDateFormat formatter = new SimpleDateFormat(Format);
         return formatter.format(d);
     }
 
-    public static String dateFormat(String data, String formate) {
-        //// TODO: formato de fecha dd-MM-yyyy HH:mm:ss      31-12-2017 17:59:59
-        Date date = StringToDate(data, formate);
-        SimpleDateFormat formatter = new SimpleDateFormat(formate);
-        return formatter.format(date);
+    public static String getDateHours(String Date) throws ParseException {
+        String Format = "kk:mm:ss a";
+        DateFormat df = new SimpleDateFormat(Format, Locale.ENGLISH);
+        Date d = df.parse(Date);
+        SimpleDateFormat formatter = new SimpleDateFormat(Format);
+        return formatter.format(d);
     }
 
-    public static Integer Epoch(String timestamp,String formate){
+    public static String dateFormat(String data, String Format) throws ParseException{
+        //// TODO: formato de fecha dd-MM-yyyy HH:mm:ss      31-12-2017 17:59:59
+        DateFormat df = new SimpleDateFormat(Format, Locale.ENGLISH);
+        Date d = df.parse(data);
+        SimpleDateFormat formatter = new SimpleDateFormat(Format);
+        return formatter.format(d);
+    }
+
+    public static Integer Epoch(String timestamp,String formate) {
         if(timestamp == null) return null;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(formate);
@@ -50,31 +68,34 @@ public class UtilsDate {
             long epoch = dt.getTime();
             return (int)(epoch/1000);
         } catch(ParseException e) {
-            return null;
+            return 0;
         }
     }
 
-    public static String textDateFromDifferencesDays(String date, String format) throws ParseException{
-        String HOUR_SHORT = "HH:mm",FORMAT_SHORT="dd-MM-yy";
-        String today = UtilsDate.dateFormatAll(FORMAT_SHORT);
-        String auxDate = UtilsDate.changeData(date,format,FORMAT_SHORT);
-        int dias = UtilsDate.differencesDate(auxDate,today);
+    public static String textFromDiffDate(String OriginDate, String Originformat){
+        String HOUR_SHORT = "kk:mm a",FORMAT_SHORT="dd-MM-yy",FORMAT="dd-MM-yyyy HH:mm:ss";
+
+        String TODAY = UtilsDate.dateTodayFormat(FORMAT);
+        OriginDate = UtilsDate.refractorFormat(OriginDate,Originformat,FORMAT);
+
+        int dias = UtilsDate.differencesDate(OriginDate,TODAY,FORMAT);
+
 
         switch (dias) {
             case 0:
-                return "Hoy a las "+UtilsDate.changeData(date,format,HOUR_SHORT);
+                return "Hoy a las "+UtilsDate.refractorFormat(OriginDate,FORMAT,HOUR_SHORT);
             case 1:
-                return "Ayer a las "+UtilsDate.changeData(date,format,HOUR_SHORT);
+                return "Ayer a las "+UtilsDate.refractorFormat(OriginDate,FORMAT,HOUR_SHORT);
             default:
                 int semanas = (int) dias/7;
                 int difDias = (dias-(7*semanas));
                 int meses = (int) semanas/4;
                 int difSem = semanas-(4*meses);
 
-                String difSemanas = semanas>1? semanas+"sem ": (semanas==0)?"":semanas+"sem ";
-                String difD = difDias>1?difDias+" dias ":(difDias==0?"":difDias+" dia ") ;
-                difD = (semanas!=0 && difDias!=0)?" y "+difD:difD;
-                String ff = UtilsDate.changeData(date,format,HOUR_SHORT);
+                String difSemanas = semanas>1? semanas+"sem": (semanas==0)?"":semanas+"Sem";
+                String difD = difDias>1?difDias+" dias":(difDias==0?"":difDias+"Día") ;
+                difD = (semanas!=0 && difDias!=0)?", "+difD:difD;
+                String ff = UtilsDate.refractorFormat(OriginDate,FORMAT,HOUR_SHORT);
 
                 return difSemanas+difD + ", "+ff;
         }
@@ -101,17 +122,17 @@ public class UtilsDate {
     }
 
 
-    public static String DateToString(Date date, String formate){
+    public static String DateToString(Date date, String Format){
         String string="";
 
-        SimpleDateFormat sdf = new SimpleDateFormat(formate);
+        SimpleDateFormat sdf = new SimpleDateFormat(Format);
         string = sdf.format(new Date());
 
         return string;
     }
 
-    public static Date StringToDate(String string, String formate){
-        DateFormat format = new SimpleDateFormat(formate, Locale.ENGLISH);
+    public static Date StringToDate(String string, String Format){
+        DateFormat format = new SimpleDateFormat(Format, Locale.ENGLISH);
         try {
             return format.parse(string);
         } catch (ParseException e) {
@@ -120,59 +141,24 @@ public class UtilsDate {
         }
     }
 
-    public static String DateVariable(String fecha, int dias, String formate) {//TODO: Suma y/o Resta a FECHAS
+    public static String DateVariable(String date, int dias, String Format) {//TODO: Suma y/o Resta a FECHAS
         //tomo string fecha sumo o resto "dias" y devuelvo el string modificado de fecha
-        Date date=null;
-        DateFormat format = new SimpleDateFormat(formate);
+        Date d=null;
+        DateFormat format = new SimpleDateFormat(Format);
         try {
-            date = format.parse(fecha);
+            d = format.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTime(d);
         calendar.add(Calendar.DAY_OF_YEAR, dias);
         Date dcalenda = calendar.getTime();
 
-        SimpleDateFormat sdf = new SimpleDateFormat(formate);
+        SimpleDateFormat sdf = new SimpleDateFormat(Format);
         String s = sdf.format(dcalenda);
         return s;
-    }
-
-    public static String filterTextView( String Date, String formate, String formate2) {
-//        dateOld =>  YYYY-MM-DD
-        Date date = null;
-        String resp = null;
-
-        SimpleDateFormat parseador = new SimpleDateFormat(formate);
-        SimpleDateFormat formateador = new SimpleDateFormat(formate2);
-
-        try {
-            date = parseador.parse(Date);
-            resp = formateador.format(date);
-            return resp;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return resp;
-    }
-    public static String filterTextViewMonth( String Date, String formate, String formate2) {
-//        dateOld =>  YYYY-MM-DD
-        Date date = null;
-        String resp = null;
-
-        SimpleDateFormat parseador = new SimpleDateFormat(formate);
-        SimpleDateFormat formateador = new SimpleDateFormat(formate2);
-
-        try {
-            date = parseador.parse(Date);
-            resp = formateador.format(date);
-            return resp;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return resp;
     }
 
     public static String getTimeZone() {
@@ -233,13 +219,13 @@ public class UtilsDate {
         return today;
     }
 
-    public static int differencesDate(String dateVisite, String dateCompare) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    public static int differencesDate(String dateString, String dateCompare, String Format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Format);
 
         Date fechaInicial= null;
         Date fechaFinal= null;
         try {
-            fechaInicial = dateFormat.parse(dateVisite);
+            fechaInicial = dateFormat.parse(dateString);
             fechaFinal=dateFormat.parse(dateCompare);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -251,7 +237,7 @@ public class UtilsDate {
         else return dias;
     }
 
-    public static String changeData(String dateOld,String originalFormat, String newFormat){
+    public static String refractorFormat(String dateOld,String originalFormat, String newFormat){
 //     dateOld =>  YYYY-MM-DD
         Date date = null;
         String resp = null;
