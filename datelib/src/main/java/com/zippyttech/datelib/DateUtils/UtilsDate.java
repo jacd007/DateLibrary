@@ -73,7 +73,7 @@ public class UtilsDate {
     }
 
     public static String textFromDiffDate(String OriginDate, String Originformat){
-        String HOUR_SHORT = "kk:mm a",FORMAT_SHORT="dd-MM-yy",FORMAT="dd-MM-yyyy HH:mm:ss";
+        String HOUR_SHORT = "KK:mm a",FORMAT_SHORT="dd-MM-yy",FORMAT="dd-MM-yyyy HH:mm:ss";
 
         String TODAY = UtilsDate.dateTodayFormat(FORMAT);
         OriginDate = UtilsDate.refractorFormat(OriginDate,Originformat,FORMAT);
