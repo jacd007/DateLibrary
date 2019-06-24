@@ -45,7 +45,7 @@ public class UtilsDate {
     }
 
     public static String getDateHours(String Date) throws ParseException {
-        String Format = "kk:mm:ss a";
+        String Format = "KK:mm:ss a";
         DateFormat df = new SimpleDateFormat(Format, Locale.ENGLISH);
         Date d = df.parse(Date);
         SimpleDateFormat formatter = new SimpleDateFormat(Format);
